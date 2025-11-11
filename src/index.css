@@ -1,1 +1,9 @@
 @import "tailwindcss";
+ body {
+   font-family: 'Lato', sans-serif;
+ }
+ @theme {
+     --Circular color: #0043CE;
+     --bg-card:#F3F5F6;
+     --text-available:#26D526;
+ }

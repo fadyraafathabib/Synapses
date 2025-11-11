@@ -1,9 +1,13 @@
-import JobCard, { type JobCardProps } from './JobCard'
-import { Button } from '../ui/button'
 
-interface JobSectionProps {
-  title: string
-  jobs: JobCardProps[]
+import { type JobCardProps } from "./JobCard";
+
+
+import JobCarousel from "./JobCarousel";
+import { Button } from "../ui/button";
+
+export interface JobSectionProps {
+  title: string;
+  jobs: JobCardProps[];
 }
 
 export default function JobSection({ title, jobs }: JobSectionProps) {
@@ -16,11 +20,7 @@ export default function JobSection({ title, jobs }: JobSectionProps) {
         </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        {jobs.map((job, i) => (
-          <JobCard key={i} {...job} />
-        ))}
-      </div>
+      <JobCarousel jobs={jobs} />
     </section>
-  )
+  );
 }
