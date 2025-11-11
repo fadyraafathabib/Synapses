@@ -31,8 +31,7 @@ export default function Header() {
             <Search className="h-4 w-4 text-gray-500 mr-2" />
             <Input
               placeholder="Search..."
-              className="bg-transparent border-none shadow-none focus:outline-none p-0 text-sm"
-              style={{ width: "180px" }}
+              className="bg-transparent border-none shadow-none focus:outline-none p-0 text-sm w-[180px]"
             />
             <span className="mx-2 text-gray-300">|</span>
             <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
