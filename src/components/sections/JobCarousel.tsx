@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   Carousel,
   CarouselContent,
@@ -22,7 +21,6 @@ export default function JobCarousel({ jobs }: JobCarouselProps) {
     >
       <CarouselContent className="-ml-2 gap-2">
         {" "}
-        {/* ← أضفنا gap-2 هنا */}
         {jobs.map((job, index) => (
           <CarouselItem
             key={index}

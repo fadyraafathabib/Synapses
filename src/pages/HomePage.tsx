@@ -91,14 +91,13 @@ export default function HomePage() {
       <Header />
 
       <div className="container mx-auto px-4 py-6">
-          
         <ProfileProgress />
 
         <JobSection title="Recommended Jobs" jobs={JOBS} />
 
-        <div className="text-center my-6">
-          <p className="text-sm text-green-500">Need Extra Help?</p>
-          <p className="text-sm text-gray-500">
+        <div className="text-center my-6 font-semibold">
+          <p className=" text-[var(--green-2)]">Need Extra Help?</p>
+          <p className="text-2xl  text-[var(--gray-900)]">
             Find verified professionals you can hire for your own cases
           </p>
         </div>

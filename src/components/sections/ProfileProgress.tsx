@@ -1,23 +1,20 @@
-import { CheckCircle } from "lucide-react";
 import { Card } from "../ui/card";
-import {cn} from "../../lib/utils";
+import { cn } from "../../lib/utils";
 import { useEffect, useState } from "react";
 
 interface CircularProgressProps {
-
   value: number;
   size?: number;
   strokeWidth?: number;
   showValue?: boolean;
-  color?: string
-
+  color?: string;
 }
 function CircularProgress({
   value,
   size = 64,
   strokeWidth = 6,
   showValue = true,
-  color = "--Circular color",
+  color,
 }: CircularProgressProps) {
   const [progress, setProgress] = useState(0);
 
@@ -38,7 +35,7 @@ function CircularProgress({
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="#e5e7eb"
+          stroke=""
           strokeWidth={strokeWidth}
         />
         \{" "}
@@ -64,7 +61,6 @@ function CircularProgress({
     </div>
   );
 }
-
 
 export default function ProfileProgress() {
   const steps = [
@@ -98,12 +94,12 @@ export default function ProfileProgress() {
 
   return (
     <section className="mb-8">
-      <h1 className="text-2xl font-bold mb-6 mt-15 w-100 h-9 block">
+      <h1 className="text-2xl font-bold mb-6 mt-15 w-100 h-9 block text-[var(--gray-900)]">
         Welcome to Synapses
       </h1>
 
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">
+        <h2 className="text-xl font-semibold text-[var(--gray-900)]">
           Complete Your Profile before you can hire
         </h2>
 
@@ -112,9 +108,11 @@ export default function ProfileProgress() {
             value={progress}
             size={64}
             strokeWidth={6}
-            color="#3b82f6"
+            color="var(--primary-70)"
           />
-          <span className="text-sm">Complete Profile</span>
+          <span className="font-bold text-[var(--gray-700)]">
+            Complete Profile
+          </span>
         </div>
       </div>
 
@@ -124,13 +122,16 @@ export default function ProfileProgress() {
             key={i}
             className={`p-4 ${
               step.completed
-                ? "bg-gray-100 --bg-card border-orange-50"
-                : "border-blue-200 hover:border-blue-300"
+                ? "bg-[var(--gray-100)]  border-[var(--gray-100)]"
+                : "border-[var(--primary-200)] hover:border-[var(--primary-300)]"
             }`}
           >
-            <div className="flex items-start justify-between mb-3w-108 h-20 ">
+            <div className="text-[14px] text-[var(--gray-900)] mb-1 font-normal block">
+              Required to hire
+            </div>
+            <div className="flex items-start justify-between mb-3 {/*w-[434.6666564941406px] h-[191px]*/}">
               <div className="flex items-start gap-3">
-                <div >
+                <div>
                   <img
                     src={step.imageUrl}
                     alt={step.title}
@@ -138,9 +139,6 @@ export default function ProfileProgress() {
                   />
                 </div>
                 <div>
-                  <div className="text-xs text-gray-500 mb-1">
-                    Required to hire
-                  </div>
                   <h3
                     className={`font-semibold ${
                       step.completed ? "text-gray-900" : "text-gray-900"
@@ -151,10 +149,14 @@ export default function ProfileProgress() {
                 </div>
               </div>
               {step.completed && (
-                <CheckCircle className="h-5 w-5 text-green-500" />
+                <img
+                  src="/ok.png"
+                  alt="ok"
+                  className="h-7 w-7"
+                />
               )}
             </div>
-            <p className="text-sm text-gray-600">{step.description}</p>
+            <p className="text-sm font-normal text-gray-900">{step.description}</p>
           </Card>
         ))}
       </div>
