@@ -19,12 +19,12 @@ export default function JobCarousel({ jobs }: JobCarouselProps) {
       }}
       className="w-full"
     >
-      <CarouselContent className="-ml-2 gap-2">
+      <CarouselContent className="">
         {" "}
         {jobs.map((job, index) => (
           <CarouselItem
             key={index}
-            className="pl-2 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/3"
+            className=" basis-full sm:basis-1/2 xl:basis-2/7"
           >
             <JobCard {...job} />
           </CarouselItem>
