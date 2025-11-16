@@ -14,7 +14,7 @@ const JOBS = [
     pay: "$420",
     schedule: "Full Day - Thursday, June 6, 2025 (9:00 AM - 5:00 PM)",
     description:
-      "Looking for a reliable RDA to assist with general procedures and patient prep with 2+ years experience, California RDA license required.",
+      "Looking for a reliable RDA to assist with general procedures and patient prep with 2+ years experience, California RDA license requicolor-red.",
     proposalsRDA: 22,
     proposalsAnesthesia: 22,
     imageUrl: "../../public/1.jpg",
@@ -46,7 +46,7 @@ const JOBS = [
     pay: "$450",
     schedule: "Full Day - Monday, June 10, 2025 (9:00 AM - 5:00 PM)",
     description:
-      "Join our team! We need an RDA for surgical assistance. Experience with implants preferred. Fast-paced environment with great team support.",
+      "Join our team! We need an RDA for surgical assistance. Experience with implants prefercolor-red. Fast-paced environment with great team support.",
     proposalsRDA: 27,
     proposalsAnesthesia: 19,
     imageUrl: "../../public/3.jpg",
@@ -62,7 +62,7 @@ const JOBS = [
     pay: "$420",
     schedule: "Full Day - Thursday, June 6, 2025 (9:00 AM - 5:00 PM)",
     description:
-      "Looking for a reliable RDA to assist with general procedures and patient prep with 2+ years experience, California RDA license required.",
+      "Looking for a reliable RDA to assist with general procedures and patient prep with 2+ years experience, California RDA license requicolor-red.",
     proposalsRDA: 22,
     proposalsAnesthesia: 22,
     imageUrl: "../../public/1.jpg",
@@ -78,7 +78,7 @@ const JOBS = [
     pay: "$420",
     schedule: "Full Day - Thursday, June 6, 2025 (9:00 AM - 5:00 PM)",
     description:
-      "Looking for a reliable RDA to assist with general procedures and patient prep with 2+ years experience, California RDA license required.",
+      "Looking for a reliable RDA to assist with general procedures and patient prep with 2+ years experience, California RDA license requicolor-red.",
     proposalsRDA: 22,
     proposalsAnesthesia: 22,
     imageUrl: "../../public/1.jpg",
@@ -96,8 +96,8 @@ export default function HomePage() {
         <JobSection title="Recommended Jobs" jobs={JOBS} />
 
         <div className="text-center my-6 font-semibold">
-          <p className=" text-(--green-2)">Need Extra Help?</p>
-          <p className="text-2xl  text-(--gray-900)">
+          <p className=" text-green-600">Need Extra Help?</p>
+          <p className="text-2xl  text-gray-900">
             Find verified professionals you can hire for your own cases
           </p>
         </div>

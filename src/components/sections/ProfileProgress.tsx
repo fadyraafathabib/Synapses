@@ -17,7 +17,7 @@ function CircularProgress({
   size = 64,
   strokeWidth = 6,
   showValue = true,
-  color = "var(--primary-500)",
+  color = "var(--color-primary-500)",
 }: CircularProgressProps) {
   const [progress, setProgress] = useState(0);
 
@@ -42,7 +42,7 @@ function CircularProgress({
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="var(--gray-200)"
+          stroke="var(--color-gray-200)"
           strokeWidth={strokeWidth}
         />
         <circle
@@ -84,7 +84,7 @@ export default function ProfileProgress() {
         "You're almost there! Verify your email to unlock full access and stay updated with job notifications",
       imageUrl: "/emil.png",
       completed: true,
-      color: "green",
+      color: "--color-green-500",
     },
     {
       title: "Verify Phone Number",
@@ -114,9 +114,11 @@ export default function ProfileProgress() {
             value={progress}
             size={64}
             strokeWidth={6}
-            color="var(--primary-500)"
+            color="var(--color-primary-500)"
           />
-          <span className="text-xs text-(--gray-600)">Complete Profile</span>
+          <span className="text-xs text-gray-600">
+            Complete Profile
+          </span>
         </div>
       </div>
 
@@ -126,8 +128,8 @@ export default function ProfileProgress() {
             key={i}
             className={`p-6 space-y-4 ${
               step.completed
-                ? "bg-(--gray-100) border-(--primary-50)"
-                : "border-(--primary-200) hover:border-(--primary-300)"
+                ? "bg-gray-100 border-primary-50"
+                : "border-primary-200 hover:border-primary-300"
             }`}
           >
             <div className="flex items-start justify-between gap-4">
@@ -140,22 +142,25 @@ export default function ProfileProgress() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <div className="text-xs text-(--gray-500)">
-                    Required to hire
+                  <div className="text-xs text-gray-500">
+                    Requicolor-red to hire
                   </div>
-                  <h3 className="font-semibold text-(--gray-900)">
+                  <h3 className="font-semibold text-gray-900">
                     {step.title}
                   </h3>
                 </div>
               </div>
               {step.completed && (
-                <img 
+                <img
                   src="/ok.png"
                   alt="ok"
-                className="h-5 w-5 text-(--secondary-500) flex-shrink-0" />
+                  className="h-5 w-5 text-(--secondary-500) flex-shrink-0"
+                />
               )}
             </div>
-            <p className="text-sm text-(--gray-600)">{step.description}</p>
+            <p className="text-sm text-gray-600">
+              {step.description}
+            </p>
           </Card>
         ))}
       </div>

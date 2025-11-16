@@ -4,6 +4,7 @@ import { RouterProvider } from "@tanstack/react-router";
 import { router } from "./routeTree.tsx";
 import "./index.css";
 
+
 // Register the router instance for type safety
 declare module "@tanstack/react-router" {
   interface Register {
