@@ -27,96 +27,63 @@ import {
   faGoogle,
 } from "@fortawesome/free-brands-svg-icons";
 
-const SignupForm: React.FC = () => {
-  const [formData, setFormData] = useState({
-    officeName: "",
-    email: "",
-    phoneNumber: "",
-    location: "",
-    specialists: "",
-    password: "",
-    confirmPassword: "",
-  });
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
+const validationSchema = yup.object({
+  officeName: yup
+    .string()
+    .min(4, "Office name must be at least 4 characters")
+    .max(20, "Office name must be at most 20 characters")
+    .required("Office name is required")
+    .trim(),
+  email: yup
+    .string()
+    .required("Email is required")
+    .email("Please enter a valid email"),
+  phoneNumber: yup
+    .string()
+    .required("Phone number is required")
+    .matches(
+      /^01[0125]\d{1,8}$/,
+      "Please enter a valid phone number (11 digits)"
+    ),
+  location: yup.string().required("Please select a location"),
+  specialists: yup.string().required("Please select specialist type"),
+  password: yup
+    .string()
+    .required("Password is required")
+    .matches(
+      /^[A-Z][a-z0-9]{1,9}$/,
+      "Password must start with an uppercase letter followed by lowercase letters or digits"
+    )
+    .min(8, "Password must be at least 8 characters"),
+  confirmPassword: yup
+    .string()
+    .required("Please confirm your password")
+    .oneOf([yup.ref("password")], "Passwords do not match"),
+});
+
+type FormData = yup.InferType<typeof validationSchema>;
+
+const SignupForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const validateEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: yupResolver(validationSchema),
+    mode: "onChange",
+  });
 
-  const validatePhone = (phone: string): boolean => {
-    const phoneRegex = /^\d{9,15}$/;
-    return phoneRegex.test(phone);
-  };
-
-  const validatePassword = (password: string): boolean => {
-    return password.length >= 8;
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
-  };
-
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
-  };
-
-  const handleSubmit = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.officeName.trim()) {
-      newErrors.officeName = "Office name is required";
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!validateEmail(formData.email)) {
-      newErrors.email = "Please enter a valid email";
-    }
-
-    if (!formData.phoneNumber.trim()) {
-      newErrors.phoneNumber = "Phone number is required";
-    } else if (!validatePhone(formData.phoneNumber)) {
-      newErrors.phoneNumber = "Please enter a valid phone number (9-15 digits)";
-    }
-
-    if (!formData.location) {
-      newErrors.location = "Please select a location";
-    }
-
-    if (!formData.specialists) {
-      newErrors.specialists = "Please select specialist type";
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (!validatePassword(formData.password)) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-
-    setErrors(newErrors);
-
-    if (Object.keys(newErrors).length === 0) {
-      console.log("Form submitted successfully:", formData);
-      alert("Account created successfully!");
-    }
+  const onSubmit = (data: FormData) => {
+    console.log("Form submitted successfully:", data);
+    alert("Account created successfully!");
   };
 
   return (
@@ -151,17 +118,15 @@ const SignupForm: React.FC = () => {
                   <User className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
                   <Input
                     type="text"
-                    name="officeName"
                     placeholder="Office Name"
-                    value={formData.officeName}
-                    onChange={handleChange}
-                    error={errors.officeName}
-                    className="pl-10 text-gray-500"
+                    {...register("officeName")}
+                    error={errors.officeName?.message}
+                    className="pl-10 "
                   />
                 </div>
                 {errors.officeName && (
                   <p className="text-red-500 text-xs mt-1">
-                    {errors.officeName}
+                    {errors.officeName?.message}
                   </p>
                 )}
               </div>
@@ -171,16 +136,16 @@ const SignupForm: React.FC = () => {
                   <Mail className="absolute left-3 top-3.5 h-5 w-5 " />
                   <Input
                     type="email"
-                    name="email"
                     placeholder="Email Address"
-                    value={formData.email}
-                    onChange={handleChange}
-                    error={errors.email}
+                    {...register("email")}
+                    error={errors.email?.message}
                     className="pl-10"
                   />
                 </div>
                 {errors.email && (
-                  <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.email?.message}
+                  </p>
                 )}
               </div>
             </div>
@@ -191,17 +156,15 @@ const SignupForm: React.FC = () => {
                   <PhoneCall className="absolute left-3 top-3.5 h-5 w-5 " />
                   <Input
                     type="tel"
-                    name="phoneNumber"
                     placeholder="+288  |  Phone Number"
-                    value={formData.phoneNumber}
-                    onChange={handleChange}
-                    error={errors.phoneNumber}
+                    {...register("phoneNumber")}
+                    error={errors.phoneNumber?.message}
                     className="pl-10  "
                   />
                 </div>
                 {errors.phoneNumber && (
                   <p className="text-red-500 text-xs mt-1">
-                    {errors.phoneNumber}
+                    {errors.phoneNumber?.message}
                   </p>
                 )}
               </div>
@@ -209,49 +172,61 @@ const SignupForm: React.FC = () => {
               <div>
                 <div className="relative text-gray-500 ">
                   <MapPin className="absolute left-3 top-3 h-5 w-5 pointer-events-none z-10" />
-                  <Select
-                    value={formData.location}
-                    onValueChange={(value) =>
-                      handleSelectChange("location", value)
-                    }
-                  >
-                    <SelectTrigger error={errors.location} className="pl-10">
-                      <SelectValue placeholder="Location" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="cairo">Cairo</SelectItem>
-                      <SelectItem value="alexandria">Alexandria</SelectItem>
-                      <SelectItem value="giza">Giza</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Controller
+                    name="location"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger
+                          error={errors.location?.message}
+                          className="pl-10"
+                        >
+                          <SelectValue placeholder="Location" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="cairo">Cairo</SelectItem>
+                          <SelectItem value="alexandria">Alexandria</SelectItem>
+                          <SelectItem value="giza">Giza</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
                 </div>
                 {errors.location && (
-                  <p className="text-red-500 text-xs mt-1">{errors.location}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.location?.message}
+                  </p>
                 )}
               </div>
             </div>
 
             <div>
               <div className="relative">
-                <Select
-                  value={formData.specialists}
-                  onValueChange={(value) =>
-                    handleSelectChange("specialists", value)
-                  }
-                >
-                  <SelectTrigger error={errors.specialists}>
-                    <SelectValue placeholder="Specialists" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="frontend">Frontend</SelectItem>
-                    <SelectItem value="backend">Backend</SelectItem>
-                    <SelectItem value="web-developer">Web Developer</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Controller
+                  name="specialists"
+                  control={control}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger error={errors.specialists?.message}>
+                        <SelectValue placeholder="Specialists" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="frontend">Frontend</SelectItem>
+                        <SelectItem value="backend">Backend</SelectItem>
+                        <SelectItem value="web-developer">
+                          Web Developer
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </div>
               {errors.specialists && (
                 <p className="text-red-500 text-xs mt-1">
-                  {errors.specialists}
+                  {errors.specialists?.message}
                 </p>
               )}
             </div>
@@ -262,11 +237,9 @@ const SignupForm: React.FC = () => {
                   <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
                   <Input
                     type={showPassword ? "text" : "password"}
-                    name="password"
                     placeholder="Password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    error={errors.password}
+                    {...register("password")}
+                    error={errors.password?.message}
                     className="pl-10 pr-10"
                   />
                   <button
@@ -282,7 +255,9 @@ const SignupForm: React.FC = () => {
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.password?.message}
+                  </p>
                 )}
               </div>
 
@@ -291,11 +266,9 @@ const SignupForm: React.FC = () => {
                   <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
                   <Input
                     type={showConfirmPassword ? "text" : "password"}
-                    name="confirmPassword"
                     placeholder="Confirm Password"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    error={errors.confirmPassword}
+                    {...register("confirmPassword")}
+                    error={errors.confirmPassword?.message}
                     className="pl-10 pr-10"
                   />
                   <button
@@ -312,14 +285,14 @@ const SignupForm: React.FC = () => {
                 </div>
                 {errors.confirmPassword && (
                   <p className="text-red-500 text-xs mt-1">
-                    {errors.confirmPassword}
+                    {errors.confirmPassword?.message}
                   </p>
                 )}
               </div>
             </div>
 
             <Button
-              onClick={handleSubmit}
+              onClick={handleSubmit(onSubmit)}
               variant="primary"
               className="mt-6  ml-25 w-100"
             >
