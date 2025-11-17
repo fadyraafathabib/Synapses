@@ -12,7 +12,7 @@ export default function JobSection({ title, jobs }: JobSectionProps) {
   return (
     <section className="mb-8">
       <div className="flex items-center justify-between mb-4 ">
-        <h2 className="text-2xl font-semibold text-gray-900">
+        <h2 className="text-2xl mt-6 font-semibold text-gray-900">
           {title}
         </h2>
         <Button

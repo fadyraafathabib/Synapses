@@ -117,7 +117,7 @@ export default function JobCard({
         </div>
       </div>
 
-      <Button className="w-full py-2 rounded-full font-semibold bg-color-gray-100 text-blue-600 text-sm hover:bg-blue-600 hover:text-white transition-colors">
+      <Button className="w-full py-2 border bg-gray-200 rounded-full font-semibold bg-color-gray-100 text-primary-500 text-sm hover:bg-primary-500 hover:text-white transition-colors">
         Apply Now
       </Button>
     </div>

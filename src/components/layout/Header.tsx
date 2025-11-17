@@ -54,7 +54,7 @@ export default function Header({}: { isOnMembershipPage?: boolean }) {
           <img
             src="/logo.png"
             alt="Synapses"
-            className="h-15 w-22 mt-2 rounded-full"
+            className="h-15 w-22 mt-2 rounded-full flex-shrink-0"
           />
 
           <nav className="font-bold hidden md:flex items-center space-x-6">
@@ -215,7 +215,10 @@ export default function Header({}: { isOnMembershipPage?: boolean }) {
                 </div>
               </div>
               <DropdownMenuSeparator className="border-t border-gray-100" />
-              <DropdownMenuItem className="flex items-center gap-3 w-full px-4 py-2 text-ms text-gray-700 font-normal bg-transparent border-none cursor-pointer text-left">
+              <DropdownMenuItem
+                onClick={() => handleNavigation("/signup")}
+                className="flex items-center gap-3 w-full px-4 py-2 text-ms text-gray-700 font-normal bg-transparent border-none cursor-pointer text-left"
+              >
                 <CiLogout className="w-6 h-6 text-gray-700 " />
                 <span>Logout</span>
               </DropdownMenuItem>
