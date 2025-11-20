@@ -1,25 +1,8 @@
-import React, { useState } from "react";
-import {
-  Eye,
-  EyeOff,
-  User,
-  Mail,
-  MapPin,
-  Lock,
-  PhoneCall,
-} from "lucide-react";
+import React from "react";
+import { User, Mail, MapPin, Lock, PhoneCall } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Link } from "@tanstack/react-router";
 
-import { Input } from "../components/ui/input";
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../components/ui/select";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faApple,
@@ -27,9 +10,11 @@ import {
   faGoogle,
 } from "@fortawesome/free-brands-svg-icons";
 
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import FormInput from "../components/ui/form-input";
+import FormSelect from "../components/ui/form-select";
 
 const validationSchema = yup.object({
   officeName: yup
@@ -68,15 +53,9 @@ const validationSchema = yup.object({
 type FormData = yup.InferType<typeof validationSchema>;
 
 const SignupForm: React.FC = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<FormData>({
+
+  const { handleSubmit, control } = useForm<FormData>({
     resolver: yupResolver(validationSchema),
     mode: "onChange",
   });
@@ -85,6 +64,18 @@ const SignupForm: React.FC = () => {
     console.log("Form submitted successfully:", data);
     alert("Account created successfully!");
   };
+
+  const locations = [
+    { key: "cairo", label: "Cairo" },
+    { key: "alexandria", label: "Alexandria" },
+    { key: "giza", label: "Giza" },
+  ];
+
+  const Specialists = [
+    { key: "frontend", label: "Frontend" },
+    { key: "backend", label: "Backend" },
+    { key: "web-developer", label: "Web Developer" },
+  ];
 
   return (
     <div className="min-h-screen ">
@@ -113,182 +104,81 @@ const SignupForm: React.FC = () => {
 
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
-                  <Input
-                    type="text"
-                    placeholder="Office Name"
-                    {...register("officeName")}
-                    error={errors.officeName?.message}
-                    className="pl-10 "
-                  />
-                </div>
-                {errors.officeName && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.officeName?.message}
-                  </p>
-                )}
-              </div>
+              <FormInput
+                beforeIcon={
+                  <User className="absolute left-3 top-3.5 h-5 w-5 text-gray-500" />
+                }
+                name="officeName"
+                control={control}
+                placeholder="Office Name"
+                className="pl-10"
+              />
 
-              <div>
-                <div className="relative text-gray-500">
-                  <Mail className="absolute left-3 top-3.5 h-5 w-5 " />
-                  <Input
-                    type="email"
-                    placeholder="Email Address"
-                    {...register("email")}
-                    error={errors.email?.message}
-                    className="pl-10"
-                  />
-                </div>
-                {errors.email && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.email?.message}
-                  </p>
-                )}
-              </div>
+              <FormInput
+                beforeIcon={
+                  <Mail className="absolute left-3 top-3.5 h-5 w-5 text-gray-500" />
+                }
+                name="email"
+                type="email"
+                control={control}
+                placeholder="Email"
+                className="pl-10"
+              />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-500">
-              <div>
-                <div className="relative ">
-                  <PhoneCall className="absolute left-3 top-3.5 h-5 w-5 " />
-                  <Input
-                    type="tel"
-                    placeholder="+288  |  Phone Number"
-                    {...register("phoneNumber")}
-                    error={errors.phoneNumber?.message}
-                    className="pl-10  "
-                  />
-                </div>
-                {errors.phoneNumber && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.phoneNumber?.message}
-                  </p>
-                )}
-              </div>
+              <FormInput
+                beforeIcon={
+                  <PhoneCall className="absolute left-3 top-3.5 h-5 w-5 text-gray-500" />
+                }
+                name="phoneNumber"
+                control={control}
+                placeholder=" +288 | Phone Number"
+                className="pl-10"
+              />
 
-              <div>
-                <div className="relative text-gray-500 ">
-                  <MapPin className="absolute left-3 top-3 h-5 w-5 pointer-events-none z-10" />
-                  <Controller
-                    name="location"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger
-                          error={errors.location?.message}
-                          className="pl-10"
-                        >
-                          <SelectValue placeholder="Location" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="cairo">Cairo</SelectItem>
-                          <SelectItem value="alexandria">Alexandria</SelectItem>
-                          <SelectItem value="giza">Giza</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                </div>
-                {errors.location && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.location?.message}
-                  </p>
-                )}
-              </div>
+              <FormSelect
+                items={locations}
+                beforeIcon={
+                  <MapPin className="absolute left-3 top-3.5 h-5 w-5 text-gray-500" />
+                }
+                name="location"
+                control={control}
+                placeholder="Location"
+                className="pl-10"
+              />
             </div>
 
-            <div>
-              <div className="relative">
-                <Controller
-                  name="specialists"
-                  control={control}
-                  render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger error={errors.specialists?.message}>
-                        <SelectValue placeholder="Specialists" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="frontend">Frontend</SelectItem>
-                        <SelectItem value="backend">Backend</SelectItem>
-                        <SelectItem value="web-developer">
-                          Web Developer
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              </div>
-              {errors.specialists && (
-                <p className="text-red-500 text-xs mt-1">
-                  {errors.specialists?.message}
-                </p>
-              )}
-            </div>
+            <FormSelect
+              items={Specialists}
+              name="specialists"
+              control={control}
+              placeholder="Specialists"
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
-                  <Input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Password"
-                    {...register("password")}
-                    error={errors.password?.message}
-                    className="pl-10 pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? (
-                      <Eye className="h-5 w-5 text-gray-500" />
-                    ) : (
-                      <EyeOff className="h-5 w-5 text-gray-500" />
-                    )}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.password?.message}
-                  </p>
-                )}
-              </div>
+              
+                <FormInput
+                  beforeIcon={
+                    <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+                  }
+                  name="password"
+                  control={control}
+                  type={ "password"}
+                  placeholder="Password"
+                  className="pl-10 pr-10"
+                />
 
-              <div>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
-                  <Input
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirm Password"
-                    {...register("confirmPassword")}
-                    error={errors.confirmPassword?.message}
-                    className="pl-10 pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-3 text-gray-500"
-                  >
-                    {showConfirmPassword ? (
-                      <Eye className="h-5 w-5 text-gray-500" />
-                    ) : (
-                      <EyeOff className="h-5 w-5 text-gray-500" />
-                    )}
-                  </button>
-                </div>
-                {errors.confirmPassword && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.confirmPassword?.message}
-                  </p>
-                )}
-              </div>
+                <FormInput
+                  beforeIcon={
+                    <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-500" />
+                  }
+                  name="confirmPassword"
+                  control={control}
+                  type={"password"}
+                  placeholder="Confirm Password"
+                  className="pl-10 pr-10"
+                />
             </div>
 
             <Button
