@@ -7,6 +7,7 @@ import {
 import HomePage from "./pages/HomePage";
 import MembershipPage from "./pages/MembershipPage";
 import SignupPage from "./pages/SignupPage";
+import RegistrationPage from "./pages/RegistrationPage";
 
 const rootRoute = createRootRoute({
   component: () => <Outlet />,
@@ -30,7 +31,12 @@ const signupRoute = createRoute({
   component: SignupPage,
 });
 
-const routeTree = rootRoute.addChildren([indexRoute, membershipRoute, signupRoute]);
+const registrationRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/registration",
+  component: RegistrationPage,
+});
+const routeTree = rootRoute.addChildren([indexRoute, membershipRoute, signupRoute, registrationRoute]);
 
 
 
