@@ -1,9 +1,10 @@
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { User, Clock } from "lucide-react";
+import { User } from "lucide-react";
 import FormInput from "../components/ui/form-input";
 import FormSelect from "../components/ui/form-select";
+import FormRadio, { FormRadioCard } from "../components/ui/form-radio";
 
 const schema = yup.object().shape({
   firstName: yup.string().required("First name is required"),
@@ -189,104 +190,47 @@ export default function VeteranRegistrationForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Do you have your medical records
-            </label>
-            <Controller
-              name="hasMedicalRecords"
-              control={control}
-              render={({ field, fieldState }) => (
-                <>
-                  <div className="flex items-center gap-8 mb-4">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        value="yes"
-                        checked={field.value === "yes"}
-                        onChange={() => field.onChange("yes")}
-                        className="w-4 h-4 text-primary-600 cursor-pointer"
-                      />
-                      <span className="text-gray-700">Yes</span>
-                    </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        value="no"
-                        checked={field.value === "no"}
-                        onChange={() => field.onChange("no")}
-                        className="w-4 h-4 text-primary-600 cursor-pointer"
-                      />
-                      <span className="text-gray-700">No</span>
-                    </label>
-                    <span className="text-sm text-gray-600">
-                      *We'll contact the appropriate medical providers and
-                      retrieve your documents securely&
-                    </span>
-                  </div>
-                  {fieldState.error && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {fieldState.error.message}
-                    </p>
-                  )}
-                </>
-              )}
-            />
-
-            {hasMedicalRecords === "no" && (
-              <Controller
-                name="recordsOption"
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                Do you have your medical records
+                </label>
+                
+                <FormRadio
+                name="hasMedicalRecords"
                 control={control}
-                render={({ field, fieldState }) => (
-                  <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                      <label className="cursor-pointer">
-                        <input
-                          type="radio"
-                          value="lawfirm"
-                          checked={field.value === "lawfirm"}
-                          onChange={() => field.onChange("lawfirm")}
-                          className="peer sr-only"
-                        />
-                        <div className="bg-primary-50 border-2 border-primary-100 rounded-xl p-4 peer-checked:border-primary-500 peer-checked:bg-primary-100 transition-all">
-                          <div className="text-primary-600 font-semibold mb-2">
-                            Get Records via Our Law Firm
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Clock className="h-4 w-4" />
-                            <span>Estimated Time: 30 days</span>
-                          </div>
-                        </div>
-                      </label>
+                items={[
+                    { key: 'yes', label: 'Yes' },
+                    { key: 'no', label: 'No' }
+                ]}
+                direction="horizontal"
+                helperText="*We'll contact the appropriate medical providers and retrieve your documents securely&"
+                />
+            </div>
 
-                      <label className="cursor-pointer">
-                        <input
-                          type="radio"
-                          value="foia"
-                          checked={field.value === "foia"}
-                          onChange={() => field.onChange("foia")}
-                          className="peer sr-only"
-                        />
-                        <div className="bg-gray-50 border-2 border-gray-200 rounded-xl p-4 peer-checked:border-primary-500 peer-checked:bg-primary-100 transition-all">
-                          <div className="text-primary-600 font-semibold mb-2">
-                            Request Free Records via FOIA Website
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Clock className="h-4 w-4" />
-                            <span>Estimated Time: 9-12 months</span>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-                    {fieldState.error && (
-                      <p className="text-red-500 text-xs mt-1">
-                        {fieldState.error.message}
-                      </p>
-                    )}
-                  </>
-                )}
-              />
+            {hasMedicalRecords === 'no' && (
+                <div>
+                <FormRadioCard
+                    name="recordsOption"
+                    control={control}
+                    items={[
+                    {
+                        key: 'lawfirm',
+                        title: 'Get Records via Our Law Firm',
+                        description: 'Estimated Time: 30 days',
+                        bgColor: 'bg-primary-50',
+                        borderColor: 'border-primary-100'
+                    },
+                    {
+                        key: 'foia',
+                        title: 'Request Free Records via FOIA Website',
+                        description: 'Estimated Time: 9-12 months',
+                        bgColor: 'bg-gray-50',
+                        borderColor: 'border-gray-200'
+                    }
+                    ]}
+                    columns={3}
+                />
+                </div>
             )}
-          </div>
           <div className="pt-4 flex justify-end">
             <button
               onClick={handleSubmit(onSubmit)}
