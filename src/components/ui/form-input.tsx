@@ -9,12 +9,18 @@ type FormInputProps = {
     placeholder?: string;
     error?: string;
     className?: string;
+    label?:string;
 }
 
 
 const FormInput = (props: FormInputProps) => {
-  const { beforeIcon, name, type, control, placeholder, className } = props;
+  const { beforeIcon, name, type, control, placeholder, className,label } = props;
   return (
+    <div>
+      {label && (<label className="block text-sm font-medium text-gray-700 mb-2">
+        {label}
+      </label>)}
+    
     <Controller
       name={name}
       control={control}
@@ -28,7 +34,7 @@ const FormInput = (props: FormInputProps) => {
               placeholder={placeholder}
               error={error?.message}
               className={className}
-                {...field}
+              {...field}
             />
             {error && (
               <p className="text-red-500 text-xs mt-1">{error.message}</p>
@@ -37,6 +43,7 @@ const FormInput = (props: FormInputProps) => {
         );
       }}
     />
+    </div>
   );
 };
 export default FormInput;

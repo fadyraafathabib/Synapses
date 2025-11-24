@@ -5,10 +5,11 @@ import { User } from "lucide-react";
 import FormInput from "../components/ui/form-input";
 import FormSelect from "../components/ui/form-select";
 import FormRadio, { FormRadioCard } from "../components/ui/form-radio";
+import { useState } from "react";
 
 const schema = yup.object().shape({
   firstName: yup.string().required("First name is required"),
-  middleName: yup.string().required("First name is required"),
+  middleName: yup.string().required("Middle name is required"),
   lastName: yup.string().required("Last name is required"),
   socialSecurityNumber: yup
     .string()
@@ -40,25 +41,21 @@ const schema = yup.object().shape({
 });
 
 export default function VeteranRegistrationForm() {
-    const {
-      control,
-      handleSubmit,
-      watch,
-    } = useForm({
-      resolver: yupResolver(schema),
-      defaultValues: {
-        firstName: "",
-        middleName: "",
-        lastName: "",
-        socialSecurityNumber: "",
-        dateOfBirth: "",
-        dodId: "",
-        vaFileNumber: "",
-        militaryBranch: "",
-        hasMedicalRecords: "",
-        recordsOption: "",
-      },
-    });
+  const { control, handleSubmit, watch, trigger } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      socialSecurityNumber: "",
+      dateOfBirth: "",
+      dodId: "",
+      vaFileNumber: "",
+      militaryBranch: "",
+      hasMedicalRecords: "",
+      recordsOption: "",
+    },
+  });
 
   const hasMedicalRecords = watch("hasMedicalRecords");
 
@@ -76,6 +73,22 @@ export default function VeteranRegistrationForm() {
     { key: "spaceforce", label: "Space Force" },
   ];
 
+  const [currentStep, setCurrentStep] = useState(1);
+
+  const handleNext = async () => {
+    const isValid = await trigger([
+      "firstName",
+      "middleName",
+      "lastName",
+      "socialSecurityNumber",
+      "dateOfBirth",
+    ]);
+
+    if (isValid) {
+      setCurrentStep(2);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-6xl mx-auto bg-white rounded-3xl shadow-sm p-8">
@@ -84,161 +97,145 @@ export default function VeteranRegistrationForm() {
         </h1>
 
         <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                First Name
-              </label>
-              <FormInput
-                name="firstName"
-                control={control}
-                placeholder="Username"
-                beforeIcon={
-                  <User className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
-                }
-                className="pl-10"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Middle Name
-              </label>
-              <FormInput
-                name="middleName"
-                control={control}
-                placeholder="Username"
-                beforeIcon={
-                  <User className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
-                }
-                className="pl-10"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Last Name
-              </label>
-              <FormInput
-                name="lastName"
-                control={control}
-                placeholder="Username"
-                beforeIcon={
-                  <User className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
-                }
-                className="pl-10"
-              />
-            </div>
-          </div>
+          {currentStep === 1 && (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <FormInput
+                  label="Frist Name"
+                  name="firstName"
+                  control={control}
+                  placeholder="Username"
+                  beforeIcon={
+                    <User className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+                  }
+                  className="pl-10"
+                />
+                <FormInput
+                  label="Middle Name"
+                  name="middleName"
+                  control={control}
+                  placeholder="Username"
+                  beforeIcon={
+                    <User className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+                  }
+                  className="pl-10"
+                />
+                <FormInput
+                  label="Last Name"
+                  name="lastName"
+                  control={control}
+                  placeholder="Username"
+                  beforeIcon={
+                    <User className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+                  }
+                  className="pl-10"
+                />
+              </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Social Security Number
-              </label>
-              <FormInput
-                name="socialSecurityNumber"
-                control={control}
-                placeholder="456-67-9997"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-700 mb-2">
-                Date of Birth
-              </label>
-              <FormInput
-                name="dateOfBirth"
-                type="date"
-                control={control}
-                placeholder="Username"
-                className=" flex justify-between"
-              />
-            </div>
-          </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormInput
+                  label="Social Security Number"
+                  name="socialSecurityNumber"
+                  control={control}
+                  placeholder="456-67-9997"
+                />
+                <FormInput
+                  label="Date of Birth"
+                  name="dateOfBirth"
+                  type="date"
+                  control={control}
+                  placeholder="Username"
+                  className=" flex justify-between"
+                />
+              </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                DoD ID Number
-              </label>
-              <FormInput
-                name="dodId"
-                control={control}
-                placeholder="12345690"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                VA File Number
-              </label>
-              <FormInput
-                name="vaFileNumber"
-                control={control}
-                placeholder="C1234567"
-              />
-            </div>
-          </div>
+              <div className="pt-4 flex justify-end">
+                <button
+                  onClick={handleNext}
+                  type="button"
+                  className="w-32 bg-primary-600 text-white rounded-xl py-3 font-semibold hover:bg-primary-700 transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+            </>
+          )}
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Military Branch
-            </label>
-            <FormSelect
-              name="militaryBranch"
-              control={control}
-              placeholder="Select"
-              items={militaryBranches}
-            />
-          </div>
+          {currentStep === 2 && (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormInput
+                  label="DoD ID Number"
+                  name="dodId"
+                  type="number"
+                  control={control}
+                  placeholder="12345690"
+                />
 
-          <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                Do you have your medical records
-                </label>
-                
-                <FormRadio
+                <FormInput
+                  label="VA File Number"
+                  name="vaFileNumber"
+                  control={control}
+                  placeholder="C1234567"
+                />
+              </div>
+
+              <FormSelect
+                label=" Military Branch"
+                name="militaryBranch"
+                control={control}
+                placeholder="Select"
+                items={militaryBranches}
+              />
+
+              <FormRadio
+                label="Do you have your medical records"
                 name="hasMedicalRecords"
                 control={control}
                 items={[
-                    { key: 'yes', label: 'Yes' },
-                    { key: 'no', label: 'No' }
+                  { key: "yes", label: "Yes" },
+                  { key: "no", label: "No" },
                 ]}
                 direction="horizontal"
                 helperText="*We'll contact the appropriate medical providers and retrieve your documents securely&"
-                />
-            </div>
+              />
 
-            {hasMedicalRecords === 'no' && (
+              {hasMedicalRecords === "no" && (
                 <div>
-                <FormRadioCard
+                  <FormRadioCard
                     name="recordsOption"
                     control={control}
                     items={[
-                    {
-                        key: 'lawfirm',
-                        title: 'Get Records via Our Law Firm',
-                        description: 'Estimated Time: 30 days',
-                        bgColor: 'bg-primary-50',
-                        borderColor: 'border-primary-100'
-                    },
-                    {
-                        key: 'foia',
-                        title: 'Request Free Records via FOIA Website',
-                        description: 'Estimated Time: 9-12 months',
-                        bgColor: 'bg-gray-50',
-                        borderColor: 'border-gray-200'
-                    }
+                      {
+                        key: "lawfirm",
+                        title: "Get Records via Our Law Firm",
+                        description: "Estimated Time: 30 days",
+                        bgColor: "bg-gray-50",
+                        borderColor: "border-primary-100",
+                      },
+                      {
+                        key: "foia",
+                        title: "Request Free Records via FOIA Website",
+                        description: "Estimated Time: 9-12 months",
+                        bgColor: "bg-gray-50",
+                        borderColor: "border-gray-200",
+                      },
                     ]}
                     columns={3}
-                />
+                  />
                 </div>
-            )}
-          <div className="pt-4 flex justify-end">
-            <button
-              onClick={handleSubmit(onSubmit)}
-              className=" w-25 bg-primary-600 text-white rounded-xl py-3 font-semibold hover:bg-primary-700 transition-colors"
-            >
-              Continue
-            </button>
-          </div>
+              )}
+              <div className="pt-4 flex justify-end">
+                <button
+                  onClick={handleSubmit(onSubmit)}
+                  type="button"
+                  className="w-32 bg-primary-600 text-white rounded-xl py-3 font-semibold hover:bg-primary-700 transition-colors"
+                >
+                  Submit
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

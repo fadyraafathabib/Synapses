@@ -13,6 +13,7 @@ type FormRadioProps = {
   className?: string;
   direction?: "horizontal" | "vertical";
   helperText?: string;
+  label?:string;
 };
 
 export const FormRadio = (props: FormRadioProps) => {
@@ -22,9 +23,16 @@ export const FormRadio = (props: FormRadioProps) => {
     items,
     direction = "horizontal",
     helperText,
+    label
   } = props;
 
   return (
+    <div>
+      {label && (
+        <label className="block text-sm font-medium text-gray-700 mb-3">
+          {label}
+        </label>
+      )}
     <Controller
       name={name}
       control={control}
@@ -64,6 +72,7 @@ export const FormRadio = (props: FormRadioProps) => {
         </div>
       )}
     />
+    </div>
   );
 };
 
@@ -82,10 +91,11 @@ type FormRadioCardProps = {
   items: CardOption[];
   className?: string;
   columns?: 1 | 2 | 3;
+  label?:string;
 };
 
 export const FormRadioCard = (props: FormRadioCardProps) => {
-  const { name, control, items, className, columns = 2 } = props;
+  const { name, control, items, className, columns = 3,label } = props;
 
   const gridClass = {
     1: "grid-cols-1",
@@ -94,6 +104,12 @@ export const FormRadioCard = (props: FormRadioCardProps) => {
   }[columns];
 
   return (
+    <div>
+      {label && (
+        <label className="block text-sm font-medium text-gray-700 mb-3">
+          {label}
+        </label>
+      )}
     <Controller
       name={name}
       control={control}
@@ -117,7 +133,6 @@ export const FormRadioCard = (props: FormRadioCardProps) => {
                     border-2 
                     ${item.borderColor || "border-gray-200"} 
                     rounded-xl p-4 
-                    peer-checked:border-primary-500 
                     peer-checked:bg-primary-100 
                     transition-all
                     hover:border-primary-300
@@ -147,6 +162,7 @@ export const FormRadioCard = (props: FormRadioCardProps) => {
         </div>
       )}
     />
+    </div>
   );
 };
 

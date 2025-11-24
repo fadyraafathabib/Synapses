@@ -14,12 +14,20 @@ type FormSelectProps = {
   placeholder?: string;
   className?: string;
   items: { key: string; label: string }[];
+  label?:string;
 };
 
 const FormSelect = (props: FormSelectProps) => {
-  const { beforeIcon, name, control, placeholder, className, items } = props;
+  const { beforeIcon, name, control, placeholder, className, items,label } = props;
 
   return (
+
+    <div>
+      {label && (
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          {label}
+        </label>
+      )}
     <Controller
       name={name}
       control={control}
@@ -49,6 +57,7 @@ const FormSelect = (props: FormSelectProps) => {
         );
       }}
     />
+    </div>
   );
 };
 
