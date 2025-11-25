@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { User } from "lucide-react";
+import { User, X } from "lucide-react";
 import FormInput from "../components/ui/form-input";
 import FormSelect from "../components/ui/form-select";
 import FormRadio, { FormRadioCard } from "../components/ui/form-radio";
@@ -38,6 +38,72 @@ const schema = yup.object().shape({
       schema.required("Please select a records retrieval option"),
     otherwise: (schema) => schema.notRequired(),
   }),
+
+  age: yup.string().required("Age is required"),
+  creditCardNumber: yup.string().when("age", {
+    is: (age: string) => {
+      if (!age) return false;
+      const birthDate = new Date(age);
+      const today = new Date();
+      const calculatedAge =
+        today.getFullYear() -
+        birthDate.getFullYear() -
+        (today.getMonth() < birthDate.getMonth() ||
+        (today.getMonth() === birthDate.getMonth() &&
+          today.getDate() < birthDate.getDate())
+          ? 1
+          : 0);
+      return calculatedAge >= 18;
+    },
+    then: (schema) =>
+      schema
+        .required("Credit card number is required")
+        .matches(/^\d{16}$/, "Credit card number must be 16 digits"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+  creditCardExpiry: yup.string().when("age", {
+    is: (age: string) => {
+      if (!age) return false;
+      const birthDate = new Date(age);
+      const today = new Date();
+      const calculatedAge = today.getFullYear() - birthDate.getFullYear();
+      return calculatedAge >= 18;
+    },
+    then: (schema) =>
+      schema
+        .required("Expiry date is required")
+        .matches(
+          /^(0[1-9]|1[0-2])\/\d{2}$/,
+          "Expiry date must be in MM/YY format"
+        ),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+  creditCardCVV: yup.string().when("age", {
+    is: (age: string) => {
+      if (!age) return false;
+      const birthDate = new Date(age);
+      const today = new Date();
+      const calculatedAge = today.getFullYear() - birthDate.getFullYear();
+      return calculatedAge >= 18;
+    },
+    then: (schema) =>
+      schema
+        .required("CVV is required")
+        .matches(/^\d{3}$/, "CVV must be 3 digits"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+
+  idImage: yup.mixed().when("age", {
+    is: (age: string) => {
+      if (!age) return false;
+      const birthDate = new Date(age);
+      const today = new Date();
+      const calculatedAge = today.getFullYear() - birthDate.getFullYear();
+      return calculatedAge >= 18;
+    },
+    then: (schema) => schema.required("ID image is required for users +18"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
 });
 
 export default function VeteranRegistrationForm() {
@@ -54,7 +120,13 @@ export default function VeteranRegistrationForm() {
       militaryBranch: "",
       hasMedicalRecords: "",
       recordsOption: "",
+      age: undefined,
+      creditCardNumber: "",
+      creditCardExpiry: "",
+      creditCardCVV: "",
+      idImage: undefined,
     },
+    mode: "onChange",
   });
 
   const hasMedicalRecords = watch("hasMedicalRecords");
@@ -87,6 +159,34 @@ export default function VeteranRegistrationForm() {
     if (isValid) {
       setCurrentStep(2);
     }
+  };
+
+  const age = watch("age");
+
+  const isAdult = () => {
+    if (!age) return false;
+    const birthDate = new Date(age);
+    const today = new Date();
+    const calculatedAge = today.getFullYear() - birthDate.getFullYear();
+    return calculatedAge >= 18;
+  };
+
+  const [imageView, setImageView] = useState<string | null>(null);
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageView(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImageView(null);
+
   };
 
   return (
@@ -148,16 +248,6 @@ export default function VeteranRegistrationForm() {
                   className=" flex justify-between"
                 />
               </div>
-
-              <div className="pt-4 flex justify-end">
-                <button
-                  onClick={handleNext}
-                  type="button"
-                  className="w-32 bg-primary-600 text-white rounded-xl py-3 font-semibold hover:bg-primary-700 transition-colors"
-                >
-                  Next
-                </button>
-              </div>
             </>
           )}
 
@@ -179,6 +269,80 @@ export default function VeteranRegistrationForm() {
                   placeholder="C1234567"
                 />
               </div>
+              <FormInput
+                label="Age"
+                name="age"
+                type="date"
+                control={control}
+                placeholder="Enter your age"
+              />
+              {isAdult() && (
+                <>
+                  <div className="border-t pt-6 mt-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                      Payment Information (+18 Required)
+                    </h3>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormInput
+                        label="Credit Card Number"
+                        name="creditCardNumber"
+                        control={control}
+                        placeholder="1234567890123456"
+                        maxLength={16}
+                      />
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormInput
+                          label="Expiry Date"
+                          name="creditCardExpiry"
+                          control={control}
+                          placeholder="MM/YY"
+                          maxLength={5}
+                        />
+                        <FormInput
+                          label="CVV"
+                          name="creditCardCVV"
+                          control={control}
+                          placeholder="123"
+                          maxLength={3}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-4">
+                      <FormInput
+                        label="Upload ID Image (JPEG or PNG)"
+                        name="idImage"
+                        type="file"
+                        control={control}
+                        accept="jpeg,png"
+                        onChange={handleImageChange}
+                      />
+
+                      {imageView && (
+                        <div className="mt-4 border rounded-lg p-4 bg-gray-50 relative">
+                          <button
+                            type="button"
+                            onClick={handleRemoveImage}
+                            className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                          >
+                            <X className="h-5 w-5" />
+                          </button>
+                          <p className="text-sm font-medium text-gray-700 mb-2">
+                            ID Image View:
+                          </p>
+                          <img
+                            src={imageView}
+                            alt="ID View"
+                            className="max-w-full h-auto max-h-64 rounded-lg shadow-sm"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
 
               <FormSelect
                 label=" Military Branch"
@@ -225,17 +389,26 @@ export default function VeteranRegistrationForm() {
                   />
                 </div>
               )}
-              <div className="pt-4 flex justify-end">
-                <button
-                  onClick={handleSubmit(onSubmit)}
-                  type="button"
-                  className="w-32 bg-primary-600 text-white rounded-xl py-3 font-semibold hover:bg-primary-700 transition-colors"
-                >
-                  Submit
-                </button>
-              </div>
             </>
           )}
+          <div className="pt-4  flex justify-end">
+            {currentStep === 2 && (
+              <button
+                onClick={() => setCurrentStep(1)}
+                type="button"
+                className=" mr-4 w-32 bg-primary-200 text-white rounded-xl py-3 font-semibold hover:bg-primary-700 transition-colors"
+              >
+                Back
+              </button>
+            )}
+            <button
+              onClick={currentStep == 1 ? handleNext : handleSubmit(onSubmit)}
+              type={currentStep === 1 ? "button" : "submit"}
+              className="w-32 bg-primary-600 text-white rounded-xl py-3 font-semibold hover:bg-primary-700 transition-colors"
+            >
+              {currentStep === 1 ? "Next" : "Submit"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
