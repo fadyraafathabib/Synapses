@@ -66,7 +66,14 @@ const schema = yup.object().shape({
       if (!age) return false;
       const birthDate = new Date(age);
       const today = new Date();
-      const calculatedAge = today.getFullYear() - birthDate.getFullYear();
+      const calculatedAge =
+        today.getFullYear() -
+        birthDate.getFullYear() -
+        (today.getMonth() < birthDate.getMonth() ||
+        (today.getMonth() === birthDate.getMonth() &&
+          today.getDate() < birthDate.getDate())
+          ? 1
+          : 0);
       return calculatedAge >= 18;
     },
     then: (schema) =>
@@ -75,7 +82,27 @@ const schema = yup.object().shape({
         .matches(
           /^(0[1-9]|1[0-2])\/\d{2}$/,
           "Expiry date must be in MM/YY format"
-        ),
+        )
+        .test("is-valid-expiry", "Card has expired", function (value) {
+          if (!value) return false;
+
+          const [month, year] = value.split("/");
+          const expMonth = parseInt(month, 10);
+          const expYear = 2000 + parseInt(year, 10);
+          const today = new Date();
+          const currentYear = today.getFullYear();
+          const currentMonth = today.getMonth() + 1;
+
+          if (expYear < currentYear) {
+            return false;
+          }
+
+          if (expYear === currentYear && expMonth < currentMonth) {
+            return false;
+          }
+
+          return true;
+        }),
     otherwise: (schema) => schema.notRequired(),
   }),
   creditCardCVV: yup.string().when("age", {
@@ -83,7 +110,14 @@ const schema = yup.object().shape({
       if (!age) return false;
       const birthDate = new Date(age);
       const today = new Date();
-      const calculatedAge = today.getFullYear() - birthDate.getFullYear();
+      const calculatedAge =
+        today.getFullYear() -
+        birthDate.getFullYear() -
+        (today.getMonth() < birthDate.getMonth() ||
+        (today.getMonth() === birthDate.getMonth() &&
+          today.getDate() < birthDate.getDate())
+          ? 1
+          : 0);
       return calculatedAge >= 18;
     },
     then: (schema) =>
@@ -98,7 +132,14 @@ const schema = yup.object().shape({
       if (!age) return false;
       const birthDate = new Date(age);
       const today = new Date();
-      const calculatedAge = today.getFullYear() - birthDate.getFullYear();
+      const calculatedAge =
+        today.getFullYear() -
+        birthDate.getFullYear() -
+        (today.getMonth() < birthDate.getMonth() ||
+        (today.getMonth() === birthDate.getMonth() &&
+          today.getDate() < birthDate.getDate())
+          ? 1
+          : 0);
       return calculatedAge >= 18;
     },
     then: (schema) => schema.required("ID image is required for users +18"),
@@ -167,7 +208,14 @@ export default function VeteranRegistrationForm() {
     if (!age) return false;
     const birthDate = new Date(age);
     const today = new Date();
-    const calculatedAge = today.getFullYear() - birthDate.getFullYear();
+    const calculatedAge =
+      today.getFullYear() -
+      birthDate.getFullYear() -
+      (today.getMonth() < birthDate.getMonth() ||
+      (today.getMonth() === birthDate.getMonth() &&
+        today.getDate() < birthDate.getDate())
+        ? 1
+        : 0);
     return calculatedAge >= 18;
   };
 
@@ -186,7 +234,6 @@ export default function VeteranRegistrationForm() {
 
   const handleRemoveImage = () => {
     setImageView(null);
-
   };
 
   return (
@@ -238,6 +285,11 @@ export default function VeteranRegistrationForm() {
                   name="socialSecurityNumber"
                   control={control}
                   placeholder="456-67-9997"
+                  onKeyPress={(e) => {
+                    if (!/[0-9]/.test(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
                 />
                 <FormInput
                   label="Date of Birth"
@@ -257,9 +309,14 @@ export default function VeteranRegistrationForm() {
                 <FormInput
                   label="DoD ID Number"
                   name="dodId"
-                  type="number"
+                  type="text"
                   control={control}
                   placeholder="12345690"
+                  onKeyPress={(e) => {
+                    if (!/[0-9]/.test(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
                 />
 
                 <FormInput
@@ -290,6 +347,11 @@ export default function VeteranRegistrationForm() {
                         control={control}
                         placeholder="1234567890123456"
                         maxLength={16}
+                        onKeyPress={(e) => {
+                          if (!/[0-9]/.test(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
                       />
 
                       <div className="grid grid-cols-2 gap-4">
@@ -306,6 +368,11 @@ export default function VeteranRegistrationForm() {
                           control={control}
                           placeholder="123"
                           maxLength={3}
+                          onKeyPress={(e) => {
+                            if (!/[0-9]/.test(e.key)) {
+                              e.preventDefault();
+                            }
+                          }}
                         />
                       </div>
                     </div>

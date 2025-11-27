@@ -13,6 +13,7 @@ type FormInputProps = {
   maxLength?: number;
   accept?: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyPress?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 
@@ -27,7 +28,8 @@ const FormInput = (props: FormInputProps) => {
     label,
     maxLength,
     accept,
-    onChange
+    onChange,
+    onKeyPress
   } = props;
   return (
     <div>
@@ -40,31 +42,54 @@ const FormInput = (props: FormInputProps) => {
       control={control}
       render={({ field, fieldState }) => {
         const { error } = fieldState;
+        const {value, ...remining}= field;
         return (
-          <div className="relative">
-            {beforeIcon}
-            <Input
-              type={type || "text"}
-              placeholder={placeholder}
-              error={error?.message}
-              className={className}
-              maxLength={maxLength}
-              accept={accept}
-              {...field}
-              onChange={(e) => {
-                field.onChange(e);
-                if (onChange) {
-                  onChange(e);
-                }
-              }}
-            />
+          <div className="w-full">
+            <div className="relative">
+              {beforeIcon}
+              {type === "file" ? (
+                <Input
+                  type="file"
+                  className={className}
+                  maxLength={maxLength}
+                  accept={accept}
+                  {...remining}
+                  onChange={(e) => {
+                    field.onChange(e.target.files?.[0]);
+                    if (onChange) {
+                      onChange(e);
+                    }
+                  }}
+                  onBlur={field.onBlur}
+                  name={field.name}
+                  ref={field.ref}
+                />
+              ) : (
+                <Input
+                  type={type || "text"}
+                  placeholder={placeholder}
+                  error={error?.message}
+                  className={className}
+                  maxLength={maxLength}
+                  accept={accept}
+                  onKeyPress={onKeyPress} 
+                  {...field}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    if (onChange) {
+                      onChange(e);
+                    }
+                  }}
+                />
+              )}
+            </div>
             {error && (
               <p className="text-red-500 text-xs mt-1">{error.message}</p>
             )}
           </div>
         );
-      }}
-    />
+        }}
+      />
     </div>
   );
 };
