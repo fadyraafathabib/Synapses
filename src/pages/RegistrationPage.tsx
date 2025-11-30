@@ -285,11 +285,7 @@ export default function VeteranRegistrationForm() {
                   name="socialSecurityNumber"
                   control={control}
                   placeholder="456-67-9997"
-                  onKeyPress={(e) => {
-                    if (!/[0-9]/.test(e.key)) {
-                      e.preventDefault();
-                    }
-                  }}
+                  
                 />
                 <FormInput
                   label="Date of Birth"
