@@ -12,10 +12,18 @@ type FormInputProps = {
   label?: string;
   maxLength?: number;
   accept?: string;
-  inputMode?: string;
-  pattern?:string
+  inputMode?:
+    | "text"
+    | "tel"
+    | "email"
+    | "numeric"
+    | "decimal"
+    | "search"
+    | "url";
+  pattern?: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyUp?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 const FormInput = (props: FormInputProps) => {
@@ -33,7 +41,7 @@ const FormInput = (props: FormInputProps) => {
     pattern,
     onChange,
     onKeyUp,
-    
+    onKeyDown,
   } = props;
   return (
     <div>
@@ -78,6 +86,7 @@ const FormInput = (props: FormInputProps) => {
                     inputMode={inputMode}
                     pattern={pattern}
                     onKeyUp={onKeyUp}
+                    onKeyDown={onKeyDown}
                     {...field}
                     onChange={(e) => {
                       field.onChange(e);

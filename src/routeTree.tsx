@@ -8,6 +8,7 @@ import HomePage from "./pages/HomePage";
 import MembershipPage from "./pages/MembershipPage";
 import SignupPage from "./pages/SignupPage";
 import RegistrationPage from "./pages/RegistrationPage";
+import PhoneNumbersForm from "./pages/PhoneNumbersForm";
 
 const rootRoute = createRootRoute({
   component: () => <Outlet />,
@@ -36,7 +37,19 @@ const registrationRoute = createRoute({
   path: "/registration",
   component: RegistrationPage,
 });
-const routeTree = rootRoute.addChildren([indexRoute, membershipRoute, signupRoute, registrationRoute]);
+
+const PhoneNumbersFormRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/phonenumbersform",
+  component: PhoneNumbersForm,
+});
+const routeTree = rootRoute.addChildren([
+  indexRoute,
+  membershipRoute,
+  signupRoute,
+  registrationRoute,
+  PhoneNumbersFormRoute,
+]);
 
 
 

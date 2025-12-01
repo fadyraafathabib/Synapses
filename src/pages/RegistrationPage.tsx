@@ -361,7 +361,8 @@ export default function VeteranRegistrationForm() {
                           maxLength={5}
                           onChange={(e) => {
                             let value = e.target.value;
-                            value = value.replace(/^(\d{2})(\d)/, "$1/$2");
+                            value = value
+                              .replace(/^(\d{2})(\d)/, "$1/$2");
                             setValue("creditCardExpiry", value);
                           }}
                         />
