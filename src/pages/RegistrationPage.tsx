@@ -148,7 +148,7 @@ const schema = yup.object().shape({
 });
 
 export default function VeteranRegistrationForm() {
-  const { control, handleSubmit, watch, trigger } = useForm({
+  const { control, handleSubmit, watch, trigger,setValue } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       firstName: "",
@@ -285,8 +285,16 @@ export default function VeteranRegistrationForm() {
                   name="socialSecurityNumber"
                   control={control}
                   placeholder="456-67-9997"
-                  
+                  maxLength={11}
+                  onChange={(e) => {
+                    let value = e.target.value;
+                    value = value
+                      .replace(/^(\d{3})(\d)/, "$1-$2")
+                      .replace(/^(\d{3}-\d{2})(\d)/, "$1-$2");
+                    setValue("socialSecurityNumber", value);
+                  }}
                 />
+
                 <FormInput
                   label="Date of Birth"
                   name="dateOfBirth"
@@ -305,14 +313,10 @@ export default function VeteranRegistrationForm() {
                 <FormInput
                   label="DoD ID Number"
                   name="dodId"
-                  type="text"
+                  type="number"
                   control={control}
                   placeholder="12345690"
-                  onKeyPress={(e) => {
-                    if (!/[0-9]/.test(e.key)) {
-                      e.preventDefault();
-                    }
-                  }}
+                  maxLength={10}
                 />
 
                 <FormInput
@@ -320,6 +324,7 @@ export default function VeteranRegistrationForm() {
                   name="vaFileNumber"
                   control={control}
                   placeholder="C1234567"
+                  maxLength={10}
                 />
               </div>
               <FormInput
@@ -343,11 +348,8 @@ export default function VeteranRegistrationForm() {
                         control={control}
                         placeholder="1234567890123456"
                         maxLength={16}
-                        onKeyPress={(e) => {
-                          if (!/[0-9]/.test(e.key)) {
-                            e.preventDefault();
-                          }
-                        }}
+                        inputMode="numeric"
+                        pattern="[0-9]*"
                       />
 
                       <div className="grid grid-cols-2 gap-4">
@@ -357,6 +359,11 @@ export default function VeteranRegistrationForm() {
                           control={control}
                           placeholder="MM/YY"
                           maxLength={5}
+                          onChange={(e) => {
+                            let value = e.target.value;
+                            value = value.replace(/^(\d{2})(\d)/, "$1/$2");
+                            setValue("creditCardExpiry", value);
+                          }}
                         />
                         <FormInput
                           label="CVV"
@@ -364,11 +371,6 @@ export default function VeteranRegistrationForm() {
                           control={control}
                           placeholder="123"
                           maxLength={3}
-                          onKeyPress={(e) => {
-                            if (!/[0-9]/.test(e.key)) {
-                              e.preventDefault();
-                            }
-                          }}
                         />
                       </div>
                     </div>
