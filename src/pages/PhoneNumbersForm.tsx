@@ -1,11 +1,15 @@
-import { Plus } from "lucide-react";
+import { Plus, Trash2, User } from "lucide-react";
 import { Button } from "../components/ui/button";
 import FormInput from "../components/ui/form-input";
 import { useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
+import { useEffect, useState } from "react";
+
 const phoneNumberSchema = yup.object().shape({
+  firstName: yup.string().required("First name is required"),
+  middleName: yup.string().required("Middle name is required"),
   phoneNumbers: yup
     .array()
     .of(
@@ -34,34 +38,86 @@ const phoneNumberSchema = yup.object().shape({
 type PhoneNumberFormData = yup.InferType<typeof phoneNumberSchema>;
 
 export default function PhoneNumbersForm() {
-  const { control, handleSubmit } = useForm<PhoneNumberFormData>({
+  const [savedRecords, setSavedRecords] = useState<PhoneNumberFormData[]>([]);
+
+  const { control, handleSubmit, reset } = useForm<PhoneNumberFormData>({
     defaultValues: {
       phoneNumbers: [{ number: "" }],
+      firstName: "",
+      middleName: "",
     },
     resolver: yupResolver(phoneNumberSchema),
   });
 
-  const { fields, append } = useFieldArray({
+  const { fields, append , remove } = useFieldArray({
     control,
     name: "phoneNumbers",
   });
 
+
   const onSubmit = (data: PhoneNumberFormData) => {
     console.log("Form submitted:", data);
+
+     const updatedRecords = [...savedRecords, data];
+     setSavedRecords(updatedRecords);
+
+     localStorage.setItem("phoneNumbersData", JSON.stringify(updatedRecords));
+     
     alert("Form submitted successfully! Check console for data.");
+     reset({
+       phoneNumbers: [{ number: "" }],
+       firstName: "",
+       middleName: "",
+     });
   };
+
+
+
+ useEffect(() => {
+    const storedData = localStorage.getItem("phoneNumbersData");
+    if (storedData) {
+      try {
+        const parsed = JSON.parse(storedData);
+        setSavedRecords(parsed);
+      } catch (error) {
+        console.error("Error loading data from localStorage:", error);
+      }
+    }
+  }, []);
+ 
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow p-8">
+      <div className="max-w-6xl mx-auto bg-white rounded-3xl shadow-sm p-8">
         <h2 className="text-2xl font-bold text-gray-500 mb-6">
           Add Phone Numbers
         </h2>
 
-        <form className="space-y-4">
+        <form className="space-y-6">
           {fields.map((field, index) => (
-            <div key={field.id} className="space-y-2">
-                <div className="flex-1">
+            <div key={field.id} className="space-y-6">
+              <div className="flex gap-2">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <FormInput
+                    label="Frist Name"
+                    name="firstName"
+                    control={control}
+                    placeholder="Username"
+                    beforeIcon={
+                      <User className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+                    }
+                    className="pl-10"
+                  />
+                  <FormInput
+                    label="Middle Name"
+                    name="middleName"
+                    control={control}
+                    placeholder="Username"
+                    beforeIcon={
+                      <User className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+                    }
+                    className="pl-10"
+                  />
                   <FormInput
                     name={`phoneNumbers.${index}.number`}
                     control={control}
@@ -80,7 +136,19 @@ export default function PhoneNumbersForm() {
                       }
                     }}
                   />
-                </div>  
+                </div>
+                {fields.length > 1 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="default"
+                    onClick={() => remove(index)}
+                    className="flex-shrink-0 text-red-600 mt-8"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
             </div>
           ))}
 
