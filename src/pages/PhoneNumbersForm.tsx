@@ -5,7 +5,7 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 const phoneNumberSchema = yup.object().shape({
   firstName: yup.string().required("First name is required"),
@@ -38,9 +38,8 @@ const phoneNumberSchema = yup.object().shape({
 type PhoneNumberFormData = yup.InferType<typeof phoneNumberSchema>;
 
 export default function PhoneNumbersForm() {
-  const [savedRecords, setSavedRecords] = useState<PhoneNumberFormData[]>([]);
 
-  const { control, handleSubmit, reset } = useForm<PhoneNumberFormData>({
+  const { control, handleSubmit, reset, watch } = useForm<PhoneNumberFormData>({
     defaultValues: {
       phoneNumbers: [{ number: "" }],
       firstName: "",
@@ -49,42 +48,49 @@ export default function PhoneNumbersForm() {
     resolver: yupResolver(phoneNumberSchema),
   });
 
-  const { fields, append , remove } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "phoneNumbers",
   });
 
-
   const onSubmit = (data: PhoneNumberFormData) => {
     console.log("Form submitted:", data);
 
-     const updatedRecords = [...savedRecords, data];
-     setSavedRecords(updatedRecords);
+    const savedRecords = JSON.parse(
+      localStorage.getItem("phoneNumbersData") || "[]"
+    );
+    const updatedRecords = [...savedRecords, data];
+    localStorage.setItem("phoneNumbersData", JSON.stringify(updatedRecords));
 
-     localStorage.setItem("phoneNumbersData", JSON.stringify(updatedRecords));
-     
+    localStorage.removeItem("currentFormData");
     alert("Form submitted successfully! Check console for data.");
-     reset({
-       phoneNumbers: [{ number: "" }],
-       firstName: "",
-       middleName: "",
-     });
+    reset({
+      phoneNumbers: [{ number: "" }],
+      firstName: "",
+      middleName: "",
+    });
   };
 
 
-
- useEffect(() => {
-    const storedData = localStorage.getItem("phoneNumbersData");
+  useEffect(() => {
+    const storedData = localStorage.getItem("currentFormData");
     if (storedData) {
       try {
         const parsed = JSON.parse(storedData);
-        setSavedRecords(parsed);
+        reset(parsed);
       } catch (error) {
         console.error("Error loading data from localStorage:", error);
       }
     }
-  }, []);
- 
+  }, [reset]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      localStorage.setItem("currentFormData", JSON.stringify(watch()));
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [watch]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
