@@ -38,32 +38,29 @@ const phoneNumberSchema = yup.object().shape({
 type PhoneNumberFormData = yup.InferType<typeof phoneNumberSchema>;
 
 export default function PhoneNumbersForm() {
+  const defaultValues = localStorage.getItem("currentFormData");
   const { control, handleSubmit, reset, watch } = useForm<PhoneNumberFormData>({
-    defaultValues: {
-      phoneNumbers: [{ number: "" }],
-      firstName: "",
-      middleName: "",
-    },
+    defaultValues: defaultValues
+      ? JSON.parse(defaultValues)
+      : {
+          phoneNumbers: [{ number: "" }],
+          firstName: "",
+          middleName: "",
+        },
     resolver: yupResolver(phoneNumberSchema),
     mode: "onChange",
   });
 
-  const { fields, append, remove  } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "phoneNumbers",
   });
 
   const onSubmit = (data: PhoneNumberFormData) => {
     console.log("Form submitted:", data);
-
-    const savedRecords = JSON.parse(
-      localStorage.getItem("phoneNumbersData") || "[]"
-    );
-    const updatedRecords = [...savedRecords, data];
-    localStorage.setItem("phoneNumbersData", JSON.stringify(updatedRecords));
-
-    localStorage.removeItem("currentFormData");
     alert("Form submitted successfully! Check console for data.");
+    localStorage.removeItem("currentFormData");
+
     reset({
       phoneNumbers: [{ number: "" }],
       firstName: "",
@@ -71,38 +68,10 @@ export default function PhoneNumbersForm() {
     });
   };
 
-    const formValues = watch();
-
-
-  useEffect(() => {
-    const storedData = localStorage.getItem("currentFormData");
-    if (storedData) {
-      try {
-        const parsed = JSON.parse(storedData);
-        reset({
-          firstName: parsed.firstName || "",
-          middleName: parsed.middleName || "",
-          phoneNumbers:
-            parsed.phoneNumbers && parsed.phoneNumbers.length > 0
-              ? parsed.phoneNumbers
-              : [{ number: "" }],
-        });
-      } catch (error) {
-        console.error("Error loading data from localStorage:", error);
-      }
-    }
-  }, [reset]);
+  const formValues = watch();
 
   useEffect(() => {
-    const hasData =
-      formValues.firstName ||
-      formValues.middleName ||
-      (formValues.phoneNumbers &&
-        formValues.phoneNumbers.some((p) => p.number));
-
-    if (hasData) {
-      localStorage.setItem("currentFormData", JSON.stringify(formValues));
-    }
+    localStorage.setItem("currentFormData", JSON.stringify(formValues));
   }, [formValues]);
 
   return (
@@ -111,32 +80,31 @@ export default function PhoneNumbersForm() {
         <h2 className="text-2xl font-bold text-gray-500 mb-6">
           Add Phone Numbers
         </h2>
-
+        <FormInput
+          label="Frist Name"
+          name="firstName"
+          control={control}
+          placeholder="Username"
+          beforeIcon={
+            <User className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+          }
+          className="pl-10"
+        />
+        <FormInput
+          label="Middle Name"
+          name="middleName"
+          control={control}
+          placeholder="Username"
+          beforeIcon={
+            <User className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+          }
+          className="pl-10"
+        />
         <form className="space-y-6">
           {fields.map((field, index) => (
             <div key={field.id} className="space-y-6">
               <div className="flex gap-2">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <FormInput
-                    label="Frist Name"
-                    name="firstName"
-                    control={control}
-                    placeholder="Username"
-                    beforeIcon={
-                      <User className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
-                    }
-                    className="pl-10"
-                  />
-                  <FormInput
-                    label="Middle Name"
-                    name="middleName"
-                    control={control}
-                    placeholder="Username"
-                    beforeIcon={
-                      <User className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
-                    }
-                    className="pl-10"
-                  />
                   <FormInput
                     name={`phoneNumbers.${index}.number`}
                     control={control}
