@@ -38,7 +38,6 @@ const phoneNumberSchema = yup.object().shape({
 type PhoneNumberFormData = yup.InferType<typeof phoneNumberSchema>;
 
 export default function PhoneNumbersForm() {
-
   const { control, handleSubmit, reset, watch } = useForm<PhoneNumberFormData>({
     defaultValues: {
       phoneNumbers: [{ number: "" }],
@@ -46,9 +45,10 @@ export default function PhoneNumbersForm() {
       middleName: "",
     },
     resolver: yupResolver(phoneNumberSchema),
+    mode: "onChange",
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove  } = useFieldArray({
     control,
     name: "phoneNumbers",
   });
@@ -71,13 +71,22 @@ export default function PhoneNumbersForm() {
     });
   };
 
+    const formValues = watch();
+
 
   useEffect(() => {
     const storedData = localStorage.getItem("currentFormData");
     if (storedData) {
       try {
         const parsed = JSON.parse(storedData);
-        reset(parsed);
+        reset({
+          firstName: parsed.firstName || "",
+          middleName: parsed.middleName || "",
+          phoneNumbers:
+            parsed.phoneNumbers && parsed.phoneNumbers.length > 0
+              ? parsed.phoneNumbers
+              : [{ number: "" }],
+        });
       } catch (error) {
         console.error("Error loading data from localStorage:", error);
       }
@@ -85,12 +94,16 @@ export default function PhoneNumbersForm() {
   }, [reset]);
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      localStorage.setItem("currentFormData", JSON.stringify(watch()));
-    }, 500);
+    const hasData =
+      formValues.firstName ||
+      formValues.middleName ||
+      (formValues.phoneNumbers &&
+        formValues.phoneNumbers.some((p) => p.number));
 
-    return () => clearTimeout(timeoutId);
-  }, [watch]);
+    if (hasData) {
+      localStorage.setItem("currentFormData", JSON.stringify(formValues));
+    }
+  }, [formValues]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
